@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; min-height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .container { background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); padding: 40px; width: 100%; max-width: 420px; }
+        .logo { text-align: center; margin-bottom: 30px; }
+        .logo-icon { width: 60px; height: 60px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 15px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 15px; }
+        .logo-icon svg { width: 30px; height: 30px; fill: white; }
+        h1 { color: #333; font-size: 24px; margin-bottom: 8px; }
+        .subtitle { color: #666; font-size: 14px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; color: #333; font-weight: 600; margin-bottom: 8px; font-size: 14px; }
+        input { width: 100%; padding: 14px 16px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 16px; outline: none; }
+        input:focus { border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.1); }
+        .btn { width: 100%; padding: 16px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(102,126,234,0.4); }
+        .btn:disabled { opacity: 0.7; cursor: not-allowed; }
+        .success { display: none; text-align: center; padding: 40px 20px; }
+        .success-icon { width: 80px; height: 80px; background: #4CAF50; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+        .success-icon svg { width: 40px; height: 40px; fill: white; }
+        .success h2 { color: #333; margin-bottom: 10px; }
+        .success p { color: #666; }
+        .error { color: #f44336; font-size: 13px; margin-top: 5px; display: none; }
+        .hidden { display: none !important; }
+        .spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: white; animation: spin 1s linear infinite; margin-right: 8px; vertical-align: middle; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="formContainer">
+            <div class="logo">
+                <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></div>
+                <h1>Бесплатный курс по нейросетям</h1>
+                <p class="subtitle">Запишись и получи доступ к обучению</p>
+            </div>
+            <form id="registrationForm">
+                <div class="form-group">
+                    <label for="name">Ваше имя</label>
+                    <input type="text" id="name" name="name" placeholder="Как к вам обращаться" required>
+                    <div class="error" id="nameError">Пожалуйста, введите имя</div>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Номер телефона</label>
+                    <input type="tel" id="phone" name="phone" placeholder="+7 (999) 123-45-67" required>
+                    <div class="error" id="phoneError">Пожалуйста, введите номер телефона</div>
+                </div>
+                <button type="submit" class="btn" id="submitBtn">Записаться бесплатно</button>
+            </form>
+        </div>
+        <div id="successContainer" class="success">
+            <div class="success-icon"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <h2>Вы записаны!</h2>
+            <p>Скоро мы свяжемся с вами.<br>Проверьте ваш телефон 📱</p>
+        </div>
+    </div>
+    <script>
+        const form = document.getElementById('registrationForm');
+        const formContainer = document.getElementById('formContainer');
+        const successContainer = document.getElementById('successContainer');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        const phoneInput = document.getElementById('phone');
+        phoneInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            let result = '';
+            if (value.length > 0) {
+                if (value[0] === '7' || value[0] === '8') {
+                    if (value[0] === '8') value = value.substring(1);
+                    result = '+' + value[0];
+                    if (value.length > 1) result += ' (' + value.substring(1, 4);
+                    if (value.length > 4) result += ') ' + value.substring(4, 7);
+                    if (value.length > 7) result += '-' + value.substring(7, 9);
+                    if (value.length > 9) result += '-' + value.substring(9, 11);
+                } else { result = '+' + value; }
+            }
+            e.target.value = result;
+        });
+        
+        phoneInput.addEventListener('focus', function(e) { if (!e.target.value) e.target.value = '+'; });
+        
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            let isValid = true;
+            
+            if (!name || name.length < 2) { document.getElementById('nameError').style.display = 'block'; isValid = false; } 
+            else { document.getElementById('nameError').style.display = 'none'; }
+            
+            const phoneClean = phone.replace(/\D/g, '');
+            if (!phone || phoneClean.length < 5) { document.getElementById('phoneError').style.display = 'block'; isValid = false; } 
+            else { document.getElementById('phoneError').style.display = 'none'; }
+            
+            if (!isValid) return;
+            
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner"></span>Отправка...';
+            
+            try {
+                const response = await fetch('/api/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, phone }) });
+                const data = await response.json();
+                if (data.success) { formContainer.classList.add('hidden'); successContainer.style.display = 'block'; }
+                else { alert('Ошибка: ' + (data.message || 'Что-то пошло не так')); }
+            } catch (error) { alert('Ошибка соединения'); } 
+            finally { submitBtn.disabled = false; submitBtn.innerHTML = 'Записаться бесплатно'; }
+        });
+    </script>
+</body>
+</html>
